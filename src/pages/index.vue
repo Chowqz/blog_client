@@ -1,5 +1,17 @@
 <template>
-    <div></div>
+    <div>
+        <el-table :data="dataList" border>
+            <el-table-column prop="title" label="标题"></el-table-column>
+            <el-table-column prop="authorName" label="作者"></el-table-column>
+            <el-table-column prop="createTime" label="创建时间"></el-table-column>
+            <el-table-column label="操作">
+                <template slot-scope="scope">
+                    <el-button type="text" @click="onEdit(scope.row)">编辑</el-button>   
+                    <el-button type="text" @click="onDel(scope.row)">删除</el-button>   
+                </template>
+            </el-table-column>
+        </el-table>
+    </div>
 </template>
 
 <script>
@@ -10,12 +22,25 @@
             }
         },
         created() {
-            this.getUserList()
+            this.getArticleList()
         },
         methods: {
-            getUserList() {
+            getArticleList() {
                 apiRequest('/api/article/articleList').then(res => {
+                    this.dataList = res;
+                }).catch(err => {
+                    util.showErrorMsg(this, err);
+                })
+            },
+            onEdit(row) {
 
+            },
+            onDel(row) {
+                let params = {
+                    articleId: row.articleId
+                }
+                apiRequest('/api/article/delArticle', params).then(res => {
+                    this.getArticleList();
                 }).catch(err => {
                     util.showErrorMsg(this, err);
                 })
@@ -25,5 +50,13 @@
 </script>
 
 <style scoped>
-    
+.article-list{
+    width: 600px;
+}
+.article-item{
+    display: flex;
+    justify-content: space-between;
+    font-size: 16px;
+    line-height: 28px;
+}
 </style>
