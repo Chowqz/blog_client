@@ -20,6 +20,14 @@ export default new Router({
         {
             path: '/addArticle',
             component: () => import( /* webpackChunkName: "addArticle" */ '@/pages/addArticle.vue')
+        },
+        {
+            path: '/upload',
+            component: () => import( /* webpackChunkName: "upload" */ '@/pages/upload.vue')
+        },
+        {
+            path: '/css',
+            component: () => import( /* webpackChunkName: "css" */ '@/pages/css.vue')
         }
     ]
 })

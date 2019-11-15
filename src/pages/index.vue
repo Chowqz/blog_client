@@ -18,7 +18,8 @@
     export default {
         data() {
             return {
-                dataList: []
+                dataList: [],
+                total: 0,
             }
         },
         created() {
@@ -27,7 +28,8 @@
         methods: {
             getArticleList() {
                 apiRequest('/api/article/articleList').then(res => {
-                    this.dataList = res;
+                    this.dataList = res.articleList;
+                    this.total = res.pageInfo.total;
                 }).catch(err => {
                     util.showErrorMsg(this, err);
                 })
