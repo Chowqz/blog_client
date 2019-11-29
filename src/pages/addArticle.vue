@@ -7,12 +7,15 @@
                 </el-form-item>
                 <el-form-item label="类型：">
                     <el-select class="w-200" v-model="formData.categoryId" placeholder="">
-                        <el-option v-for="(item, index) in categoryList" :key="index" :label="item.categoryName" :value="item.categoryId"></el-option>
+                        <el-option v-for="(item, index) in categoryList" :key="index" :label="item.categoryName" :value="item.id"></el-option>
                     </el-select>
                 </el-form-item>
             </el-form>
             <div class="editor" id="editor"></div>
-            <el-button type="primary" @click="preview" size="small">预览</el-button>
+            <div class="btn-wrapper">
+                <el-button class="preview-btn" type="primary" @click="preview" size="small">预览</el-button>
+                <el-button class="submit-btn" type="primary" @click="onSubmit" size="small">提交</el-button>
+            </div>
         </div>
         <div class="section-r">
             <div class="preview-wrapper" v-html="innerHTML"></div>
@@ -29,6 +32,7 @@
             return {
                 categoryList: [],
                 formData: {
+                    articleId: this.$route.query.id,
                     title: '',
                     categoryId: ''
                 },
@@ -39,6 +43,9 @@
             
         },
         created() {
+            if(this.formData.articleId) {
+                this.getArticleDetail();
+            }
             this.getCategoryList();
         },
         mounted() {
@@ -48,6 +55,18 @@
             })
         },
         methods: {
+            getArticleDetail() {
+                let params = {
+                    articleId: this.formData.articleId
+                }
+                apiRequest('/api/article/getArticleDetail', params).then(res => {
+                    this.formData.title = res.title;
+                    this.formData.categoryId = res.categoryId;
+                    this.innerHTML = res.content;
+                }).catch(err => {
+                    util.showErrorMsg(this, err);
+                })
+            },
             getCategoryList() {
                 apiRequest('/api/article/categoryList').then(res => {
                     this.categoryList = res;
@@ -63,7 +82,11 @@
                     ...this.formData,
                     content: this.innerHTML
                 };
-                apiRequest('/api/article/createArticle', params).then(res => {
+                let path = '/api/article/createArticle';
+                if(params.articleId) {
+                    path = '/api/article/updateArticle';
+                }
+                apiRequest(path, params).then(res => {
                     util.showSuccessMsg(this, '提交成功')
                 }).catch(err => {
                     util.showErrorMsg(this, err)
@@ -82,6 +105,13 @@
     width: 50%;
 }
 .editor{
-    height: 600px;
+    margin-top: 20px;
+    position: relative;
+    z-index: 20;
+}
+.btn-wrapper{
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
 }
 </style>

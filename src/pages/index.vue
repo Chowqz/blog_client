@@ -1,5 +1,6 @@
 <template>
     <div>
+        <el-button type="primary" @click="onAdd">新增</el-button>
         <el-table :data="dataList" border>
             <el-table-column prop="title" label="标题"></el-table-column>
             <el-table-column prop="authorName" label="作者"></el-table-column>
@@ -35,16 +36,26 @@
                 })
             },
             onEdit(row) {
-
+                this.$router.push({
+                    path: '/addArticle',
+                    query: {
+                        id: row.id
+                    }
+                })
             },
             onDel(row) {
                 let params = {
-                    articleId: row.articleId
+                    articleId: row.id
                 }
                 apiRequest('/api/article/delArticle', params).then(res => {
                     this.getArticleList();
                 }).catch(err => {
                     util.showErrorMsg(this, err);
+                })
+            },
+            onAdd() {
+                this.$router.push({
+                    path: '/addArticle'
                 })
             }
         }

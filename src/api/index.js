@@ -37,6 +37,11 @@ export function uploadFile(path, files, params) {
     return new Promise((resolve, reject) => {
         axiosInstance.post(path, uploadData, config).then(respone => {
             let res = respone.data;
+            if(res._errCode === '3001') {
+                reject(res._errMsg);
+                window.replace('/login')
+                return;
+            }
             if(res._errCode === '0') {
                 resolve(res._data);
             }
